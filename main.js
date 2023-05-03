@@ -33,114 +33,100 @@ function iniciarSesion(usuarioAcceso,claveAcceso,listo){
                 
 }
 
-const arrayA = [];
-const arrayB = [];
-const arrayC = [];
-const arrayPlatos = [];
-
-class Plato{
-    constructor(nombre,compartido,precio){
+class Comensal {
+    constructor(nombre, platos,gastos) {
         this.nombre = nombre;
-        this.compartido = compartido;
-        this.precio = precio;            
+        this.platos = platos;
+        this.gastos = gastos;
+      }
     }
-}
-
-class Comensal{
-    constructor(nombre){
-        this.nombre = nombre;         
-    }
-}
-
-let cantPersonas = parseInt(prompt("Por favor ingrese la cantidad de comensales"));
-
-
-for(let i = 0;i < cantPersonas; i++){
-    let nombPersonas = prompt("Por favor ingrese el nombre del comensal numero " + i);
-    if(i===0){
-        const comensalUno = new Comensal (nombPersonas);
-        const arrayA = [comensalUno]
-        //arrayA.push(comensalUno);
-        console.log(comensalUno);
-        console.log("aca esta el array"+arrayA);
-    }
-    if(i===1){
-        const comensalDos = new Comensal (nombPersonas);
-        arrayA.push(comensalDos);
-        console.log("aca esta el otro array"+arrayA);
-        console.log(comensalDos);
-    }
-    if(i===2){
-        const comensalTres = new Comensal (nombPersonas);
-        arrayA.push(comensalTres);
-        console.log(comensalTres);
-    }
-    if(i===3){
-        const comensalCuatro = new Comensal (nombPersonas);
-        arrayA.push(comensalCuatro);
-        console.log(comensalCuatro);
-    }  
-}  
-console.log(arrayA);
-
-for (let i=0;i<cantPersonas;i++){
-    let cantPlatos = parseInt(prompt("Cuantos platos consumio " + arrayA[i]));
-    arrayB.push(cantPlatos);
-    for (let i=0;i<cantPlatos;i++){
-        let platoNombre = prompt("Ingrese el  nombre del plato " + i );
-        let platoCompartido = prompt("Compartio el plato con otro comensal? S/N");
-        if ((platoCompartido === 'S') ||  (platoCompartido === 's')){
-            let nombCompartido = prompt("Ingrese con quien compartio el plato");  
-            console.log("hola llegue " + nombCompartido);
-            //metodo de busqueda  
-            const buscaComensal = arrayA.find(item=> item.nombre === nombCompartido);
-            console.log("hola llegue " + buscaComensal);    
-        };
-        let platoPrecio = parseInt(prompt("Ingrese el  precio del plato " + i ));
-        if(i===0){
-            const PlatoUno = new Plato (platoNombre,platoCompartido,platoPrecio);
-            console.log(PlatoUno);
-            const arrayPlatos = [];
-            arrayPlatos.push(PlatoUno);
-            console.log(arrayPlatos);
-        }
-        if (i === 1){
-            const PlatoDos = new Plato (platoNombre,platoCompartido,platoPrecio);
-            arrayPlatos.push(PlatoDos);
-            console.log(PlatoDos);
-            console.log(arrayPlatos);
-        }
-        if (i === 2){
-            const PlatoTres = new Plato (platoNombre,platoCompartido,platoPrecio);
-            arrayPlatos.push(PlatoTres);
-            console.log(PlatoTres);
-            console.log(arrayPlatos);
-        }
-        
-        
-    }
-    console.log(arrayB);
-    console.log(arrayC);
     
+class Plato {
+    constructor(nombre, precio, compartido, compartidoCon) {
+    this.nombre = nombre;
+    this.precio = precio;
+    this.compartido = compartido;
+    this.compartidoCon = compartidoCon;
+    }
+}
+
+
+let cantidadComensales = parseInt(prompt("Ingrese la cantidad de comensales"));
+let arrayComensales = [];
+let arrayCantPlatos= [];
+
+// Preguntar los nombres de los comensales
+for (let i = 0; i < cantidadComensales; i++) {
+  let nombreComensal = prompt(`Ingrese el nombre del comensal ${i + 1}`);
+  let comensal = new Comensal(nombreComensal, [], []);
+  arrayComensales.push(comensal);
+}
+
+// Preguntar los platos consumidos por cada comensal
+for (let i = 0; i < cantidadComensales; i++) {
+  let cantidadPlatos = parseInt(prompt(`¿Cuántos platos consumió ${arrayComensales[i].nombre}?`));
+  arrayCantPlatos.push(cantidadPlatos);
+ 
+
+  for (let j = 0; j < cantidadPlatos; j++) {
+        let nombrePlato = prompt(`Ingrese el nombre del plato ${j + 1} que consumió ${arrayComensales[i].nombre}`);
+        let precioPlato = parseFloat(prompt(`Ingrese el precio del plato ${j + 1} que consumió ${arrayComensales[i].nombre}`));
+
+        let compartidoPlato = prompt(`¿Compartió ${arrayComensales[i].nombre} el plato ${nombrePlato}? (S/N)`).toLowerCase() === 's';
+        let compartidoCon = [];
+        let montoCompartido = 0;
+        if (compartidoPlato) {
+            let cantidadCompartido = parseInt(prompt(`¿Con cuántas personas compartió ${arrayComensales[i].nombre} el plato ${nombrePlato}?`));
+            montoCompartido = precioPlato / (cantidadCompartido + 1);
+            for (let k = 0; k < cantidadCompartido; k++) {
+                let nombreCompartido = prompt(`Ingrese el nombre de la persona con quien compartió el plato ${nombrePlato}`);
+                compartidoCon.push(nombreCompartido);
+                let comensalEncontrado = arrayComensales.find(comensal => comensal.nombre === nombreCompartido);
+                if (comensalEncontrado) {
+
+                    //comensal.gastos.push(montoCompartido);
+                    alert(`Comensal ${nombreCompartido} encontrado`);
+                }
+            }
+        }
+
+        let comensalActual = arrayComensales[i];
+        let plato = new Plato(nombrePlato, precioPlato, compartidoPlato, compartidoCon, montoCompartido);
+        comensalActual.platos.push(plato);
     
-    //arrayC.push(plato);
+    }
+
+}
+
+const comensalesDiv = document.getElementById('comensales');
+
+for (let i = 0; i < arrayComensales.length; i++) {
+  const comensalDiv = document.createElement('div');
+ 
+  const nombreComensal = document.createElement('h3');
+  nombreComensal.textContent = `Comensal ${i + 1}: ${arrayComensales[i].nombre}`;
+  comensalDiv.appendChild(nombreComensal);
+
+  const platosComensal = document.createElement('ul');
+  for (let j = 0; j < arrayComensales[i].platos.length; j++) {
+    const plato = arrayComensales[i].platos[j];
+    const platoLi = document.createElement('li');
+    platoLi.textContent = `${plato.nombre} - Precio: $${plato.precio} - Compartido: ${plato.compartido ? 'Sí' : 'No'}`;
+    if (plato.compartido) {
+      platoLi.textContent += ` - Compartido con: ${plato.compartidoCon}` 
+      /*- Monto compartido: $${plato.montoCompartido.toFixed(2)}`;*/
+    }
+    platosComensal.appendChild(platoLi);
+  }
+  comensalDiv.appendChild(platosComensal);
+  comensalesDiv.appendChild(comensalDiv);
 }
 
 
 
 
-/*arrayPlatos.forEach(Plato=>{
-    console.log(Plato);
-})*/
 
-
-
-
-
-
-
-
-let pregunta = parseInt(prompt("Todos gastaron lo mismo?(Si='S' , No='N'"));
+/*let pregunta = parseInt(prompt("Todos gastaron lo mismo?(Si='S' , No='N'"));
 let totalCompra = parseInt(prompt("Por favor ingrese el total de la compra"));
     for(let i = 0;i < cantPersonas; i++){
         let persona1 = prompt("Por favor ingrese el nombre de la persona " + i);
@@ -159,5 +145,5 @@ function calculaDivision(totalCompra,cantPersonas,persona,monto){
         let cantPago = cantIndividual - monto;
         mensaje = mensaje + persona + " debe pagar: " + cantPago + "\n";
     }
-}
+}*/
 
