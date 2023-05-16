@@ -50,6 +50,14 @@ class Plato {
     }
 }
 
+//PRUEBA
+
+const cantComensales = document.getElementById =("cantComensales") 
+
+cantComensales.innertext = ""
+
+//
+
 
 let cantidadComensales = parseInt(prompt("Ingrese la cantidad de comensales"));
 let arrayComensales = [];
