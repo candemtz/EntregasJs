@@ -7,7 +7,7 @@ let listo = "";
 let montoTotal = 0;
 let mensaje = " ";
 let cantAccesos = 0;
-
+/*
 while (ingresoExitoso != "S"){
     let usuarioAcceso = prompt("Ingrese su usuario");
     let claveAcceso = prompt("Ingrese su contraseña");
@@ -31,7 +31,7 @@ function iniciarSesion(usuarioAcceso,claveAcceso,listo){
         }     
     }
                 
-}
+}*/
 
 class Comensal {
     constructor(nombre, platos,gastos) {
@@ -50,61 +50,170 @@ class Plato {
     }
 }
 
-//PRUEBA
 
-const cantComensales = document.getElementById =("cantComensales") 
-
-cantComensales.innertext = ""
-
-//
-
-
-let cantidadComensales = parseInt(prompt("Ingrese la cantidad de comensales"));
 let arrayComensales = [];
-let arrayCantPlatos= [];
+let arrayCantPlatos = [];
+let numComensales = 0;
 
-// Preguntar los nombres de los comensales
-for (let i = 0; i < cantidadComensales; i++) {
-  let nombreComensal = prompt(`Ingrese el nombre del comensal ${i + 1}`);
-  let comensal = new Comensal(nombreComensal, [], []);
-  arrayComensales.push(comensal);
+const cantidadComensales = document.getElementById("cantComensales");
+const errorMensaje = document.getElementById("errorMensaje");
+const btnSiguiente = document.getElementById("btnSiguiente");
+
+function validarNombres() {
+    let nombresCompletos = true;
+    for (let i = 0; i < cantidadComensales.value; i++) {
+        const nombreComensal = document.getElementById("nombreComensal" + i);
+        const cantidadPlatos = document.getElementById("cantidadPlatos" + i);
+
+        if (nombreComensal.value === "" || cantidadPlatos.value === "") {
+            nombresCompletos = false;
+            break;
+        } else {
+            let comensal = new Comensal(nombreComensal.value, parseInt(cantidadPlatos.value), [], []);
+            arrayComensales.push(comensal);
+            arrayCantPlatos.push(parseInt(cantidadPlatos.value));
+        }
+    }
+    return nombresCompletos;
 }
 
-// Preguntar los platos consumidos por cada comensal
-for (let i = 0; i < cantidadComensales; i++) {
-  let cantidadPlatos = parseInt(prompt(`¿Cuántos platos consumió ${arrayComensales[i].nombre}?`));
-  arrayCantPlatos.push(cantidadPlatos);
- 
+function validarCantidades() {
+    let cantidadesCompletas = true;
+    arrayCantPlatos.forEach(cantidadPlatos => {
+        if (isNaN(cantidadPlatos) || cantidadPlatos <= 0) {
+            cantidadesCompletas = false;
+        }
+    });
+    return cantidadesCompletas;
+}
 
-  for (let j = 0; j < cantidadPlatos; j++) {
-        let nombrePlato = prompt(`Ingrese el nombre del plato ${j + 1} que consumió ${arrayComensales[i].nombre}`);
-        let precioPlato = parseFloat(prompt(`Ingrese el precio del plato ${j + 1} que consumió ${arrayComensales[i].nombre}`));
-
-        let compartidoPlato = prompt(`¿Compartió ${arrayComensales[i].nombre} el plato ${nombrePlato}? (S/N)`).toLowerCase() === 's';
-        let compartidoCon = [];
-        let montoCompartido = 0;
-        if (compartidoPlato) {
-            let cantidadCompartido = parseInt(prompt(`¿Con cuántas personas compartió ${arrayComensales[i].nombre} el plato ${nombrePlato}?`));
-            montoCompartido = precioPlato / (cantidadCompartido + 1);
-            for (let k = 0; k < cantidadCompartido; k++) {
-                let nombreCompartido = prompt(`Ingrese el nombre de la persona con quien compartió el plato ${nombrePlato}`);
-                compartidoCon.push(nombreCompartido);
-                let comensalEncontrado = arrayComensales.find(comensal => comensal.nombre === nombreCompartido);
-                if (comensalEncontrado) {
-
-                    //comensal.gastos.push(montoCompartido);
-                    alert(`Comensal ${nombreCompartido} encontrado`);
-                }
-            }
+document.addEventListener("DOMContentLoaded", () => {
+    cantidadComensales.addEventListener("change", () => {
+        numComensales = cantidadComensales.value;
+        let html = "";
+        for (let i = 0; i < cantidadComensales.value; i++) {
+            html += `<div>
+                <label for="nombreComensal${i}">Ingrese el nombre del comensal ${i + 1}: </label> 
+                <input type="text" name="" id="nombreComensal${i}">
+                <label for="cantidadPlatos${i}">Cantidad de platos: </label>
+                <input type="text" name="" id="cantidadPlatos${i}">
+            </div>`;
         }
 
-        let comensalActual = arrayComensales[i];
-        let plato = new Plato(nombrePlato, precioPlato, compartidoPlato, compartidoCon, montoCompartido);
-        comensalActual.platos.push(plato);
-    
-    }
+        const IdComensal = document.getElementById("comensales");
+        IdComensal.innerHTML = html;
 
-}
+        const nombreInputs = document.querySelectorAll('[id^="nombreComensal"]');
+        const cantidadPlatosInputs = document.querySelectorAll('[id^="cantidadPlatos"]');
+
+        nombreInputs.forEach((input, index) => {
+            input.addEventListener("input", () => {
+                const nombresCompletos = validarNombres();
+                const cantidadesCompletas = validarCantidades();
+                btnSiguiente.style.display = nombresCompletos && cantidadesCompletas ? "block" : "none";
+            });
+        });
+
+        cantidadPlatosInputs.forEach((input, index) => {
+            input.addEventListener("input", () => {
+                const cantidadesCompletas = validarCantidades();
+                btnSiguiente.style.display = cantidadesCompletas ? "block" : "none";
+            });
+        });
+
+        btnSiguiente.addEventListener("click", () => {
+            const nombresCompletos = validarNombres();
+      const cantidadesCompletas = validarCantidades();
+      if (nombresCompletos && cantidadesCompletas) {
+        const comensalIndex = 0; // Cambiar el índice del comensal según tu lógica
+        const platosIngresados = parseInt(
+          document.getElementById(`cantidadPlatos${comensalIndex}`).value
+        );
+
+        if (comensalIndex >= 0 && comensalIndex < arrayCantPlatos.length) {
+          if (platosIngresados >= arrayCantPlatos[comensalIndex]) {
+            const cantidadPlatos = platosIngresados;
+            window.location.href = `platos.html?nombres=${JSON.stringify(
+              Array.from(nombreInputs).map((input) => input.value)
+            )}&cantidadPlatos=${cantidadPlatos}`;
+          } else {
+            alert("La cantidad de platos ingresada es menor que la cantidad asignada al comensal.");
+          }
+        } else {
+          alert("Índice de comensal inválido.");
+        }
+      } else {
+        alert("Debe ingresar todos los nombres de los comensales y la cantidad de platos.");
+      }
+        });
+    });
+});
+    
+        
+        console.log("ENTRO");
+        let adentroForm = 'S';
+    
+        /*for (let i = 0; i < cantidadComensales.value; i++) {
+            html = `<div>
+                        <label for="nombreComensal${i}">Cuantos platos consumió ${arrayComensales[i].nombre} </label> 
+                        <br>
+                        <input type="text" name="" id="cantPlatos${i}">
+                    </div>`;
+
+            const IdCantPlatos = document.getElementById("divForm");
+            IdCantPlatos.innerHTML = html;*/
+        
+            /*let cantidadPlatos = parseInt(prompt(`¿Cuántos platos consumió ${arrayComensales[i].nombre}?`));
+            arrayCantPlatos.push(cantidadPlatos);*/
+            /*
+            for (let j = 0; j < cantidadPlatos; j++) {
+                let nombrePlato = prompt(`Ingrese el nombre del plato ${j + 1} que consumió ${arrayComensales[i].nombre}`);
+                let precioPlato = parseFloat(prompt(`Ingrese el precio del plato ${j + 1} que consumió ${arrayComensales[i].nombre}`));
+        
+                let compartidoPlato = prompt(`¿Compartió ${arrayComensales[i].nombre} el plato ${nombrePlato}? (S/N)`).toLowerCase() === 's';
+                let compartidoCon = [];
+                let montoCompartido = 0;
+                if (compartidoPlato) {
+                    let cantidadCompartido = parseInt(prompt(`¿Con cuántas personas compartió ${arrayComensales[i].nombre} el plato ${nombrePlato}?`));
+                    montoCompartido = precioPlato / (cantidadCompartido + 1);
+                    for (let k = 0; k < cantidadCompartido; k++) {
+                        let nombreCompartido = prompt(`Ingrese el nombre de la persona con quien compartió el plato ${nombrePlato}`);
+                        compartidoCon.push(nombreCompartido);
+                        let comensalEncontrado = arrayComensales.find(comensal => comensal.nombre === nombreCompartido);
+                        if (comensalEncontrado) {
+        
+                            //comensal.gastos.push(montoCompartido);
+                            alert(`Comensal ${nombreCompartido} encontrado`);
+                        }
+                    }
+                }
+        
+                let comensalActual = arrayComensales[i];
+                let plato = new Plato(nombrePlato, precioPlato, compartidoPlato, compartidoCon, montoCompartido);
+                comensalActual.platos.push(plato);
+            
+            }*/
+        
+        /*}*/
+
+
+        
+    
+
+    
+
+
+
+// Preguntar los nombres de los comensales
+
+
+    
+
+
+
+
+// Preguntar los platos consumidos por cada comensal
+
 
 const comensalesDiv = document.getElementById('comensales');
 
