@@ -1,4 +1,4 @@
-alert("Bienvenido al sistema!A continuacion podra ingresar su usuario y contraseña, tiene 5 intentos");
+//alert("Bienvenido al sistema!A continuacion podra ingresar su usuario y contraseña, tiene 5 intentos");
 
 const usuarioRegistrado = 'accesocoder';
 const claveRegistrado = 'entregauno';

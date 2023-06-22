@@ -48,9 +48,14 @@
         </div>
         <div class="form-group">
        </div>
+       <div class="form-group">
+        <div id="errorMessage" class="text-danger"></div>
+      </div>
         <button type="button" id="btnFinalizar">Finalizar</button>
       </form>
       <script >
+
+const gastosComensales = {}; 
    document.addEventListener("DOMContentLoaded", () => {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
@@ -68,6 +73,7 @@
   let platoIndex = 1;
   let platosIngresados = 0;
   let cantidadPlatosComensal = 0;
+  
 
   const updateTitle = () => {
     const comensal = nombres[comensalIndex];
@@ -106,22 +112,22 @@
     const comboPersonas = comboPersonasSelect.value;
 
     if (nombPlato === "") {
-      alert("Ingrese el nombre del plato");
+      mostrarError("Ingrese el nombre del plato");
       return;
     }
 
     if (precioPlato === "") {
-      alert("Ingrese el precio del plato");
+      mostrarError("Ingrese el precio del plato");
       return;
     }
 
     if (compartioPlato && cantPersonas === "") {
-      alert("Ingrese la cantidad de personas con las que compartió el plato");
+      mostrarError("Ingrese la cantidad de personas con las que compartió el plato");
       return;
     }
 
     if (compartioPlato && comboPersonas === "Elija...") {
-      alert("Seleccione con quién compartió el plato");
+      mostrarError("Seleccione con quién compartió el plato");
       return;
     }
 
@@ -142,7 +148,7 @@
     platosIngresados++;
     cantidadPlatosComensal++;
 
-    if (platosIngresados >= arrayCantPlatos[comensalIndex]) {
+    if (!Array.isArray(arrayCantPlatos) || arrayCantPlatos[comensalIndex] === undefined || platosIngresados >= arrayCantPlatos[comensalIndex]) {
       platosIngresados = 0;
       cantidadPlatosComensal = 0;
       comensalIndex++;
@@ -165,23 +171,29 @@
     cantPersonasInput.value = "";
     comboPersonasSelect.disabled = true;
     comboPersonasSelect.value = "Elija...";
+    mostrarError("");
   });
 
+  function mostrarError(mensaje) {
+      const errorMessage = document.getElementById("errorMessage");
+      errorMessage.textContent = mensaje;
+    }
+
   function obtenerDatosFormulario() {
-    const gastosComensales = {};
+    const gastosComensalesArray = [];
 
-    nombres.forEach((comensal, index) => {
-      gastosComensales[comensal] = [];
-
-      if (index in gastosComensales) {
-        gastosComensales[index].forEach((plato) => {
-          gastosComensales[comensal].push({
-            nombre: plato.nombre,
-            precio: plato.precio
+  nombres.forEach((comensal, index) => {
+    if (index in gastosComensales) {
+      Object.keys(gastosComensales).forEach((comensal) => {
+        gastosComensales[comensal].forEach((plato) => {
+          gastosComensalesArray.push({
+          nombre: plato.nombre,
+          precio: plato.precio
           });
         });
-      }
-    });
+      });
+    }
+  });
 
     const gastosComensalesString = JSON.stringify(gastosComensales);
     const gastosComensalesEncoded = encodeURIComponent(gastosComensalesString);
